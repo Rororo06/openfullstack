@@ -1,0 +1,19 @@
+{
+  "name": "blogilista-e2e",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "description": "Full Stack Open part 5 bloglist end-to-end tests",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
+  }
+}
