@@ -1,0 +1,19 @@
+{
+  "anecdotes": [
+    {
+      "content": "If it hurts, do it more often",
+      "id": "47145",
+      "votes": 0
+    },
+    {
+      "content": "Adding manpower to a late software project makes it later!",
+      "id": "21149",
+      "votes": 0
+    },
+    {
+      "content": "The best way to get a project done faster is to start sooner.",
+      "id": "69581",
+      "votes": 0
+    }
+  ]
+}
