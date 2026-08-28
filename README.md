@@ -43,6 +43,9 @@ Exercise submissions for the University of Helsinki [Full Stack Open](https://fu
 | [osa12/todo-app](./osa12/todo-app) | Part 12 – Containerised todo app with nginx, MongoDB and Redis (12.1–12.22) |
 | [osa13/blogilista-psql](./osa13/blogilista-psql) | Part 13 – Blog list on PostgreSQL with Sequelize (13.1–13.24) |
 
+Node 22 is expected (the Vite 8 based apps need `^20.19 || >=22.12`); parts 12
+and 13 also need Docker.
+
 The applications are Vite + React apps. Run one with:
 
 ```bash
@@ -176,6 +179,34 @@ cp .env.example .env
 npm start          # then open in Expo Go, an emulator or the browser
 npm test
 ```
+
+### CI/CD (part 11)
+
+The pipeline lives in [`.github/workflows/pipeline.yml`](./.github/workflows/pipeline.yml):
+it lints and tests the part 4 backend and the part 5 frontend, runs the Playwright
+suite, deploys the bloglist app and tags a release on every push to main.
+[`health_check.yml`](./.github/workflows/health_check.yml) pings
+https://blogilista-vgy5.onrender.com/health daily. The written exercises are in
+[osa11/README.md](./osa11/README.md).
+
+### Containers (part 12)
+
+```bash
+cd osa12/todo-app
+docker compose -f docker-compose.dev.yml up --build   # nginx on http://localhost:8080
+```
+
+See [osa12/README.md](./osa12/README.md) for the production compose file and the
+individual container exercises.
+
+### Blog list on PostgreSQL (part 13)
+
+```bash
+docker run -d --name pg13 -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=blogs -p 5433:5432 postgres:16
+cd osa13/blogilista-psql && npm install && cp .env.example .env && npm start
+```
+
+Migrations run at startup; the endpoints are listed in [osa13/README.md](./osa13/README.md).
 
 ### Countries
 
