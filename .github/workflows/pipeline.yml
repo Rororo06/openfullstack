@@ -81,13 +81,13 @@ jobs:
     if: >-
       github.event_name == 'push' &&
       !contains(join(github.event.commits.*.message, ' '), '#skip')
+    env:
+      RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
     steps:
       - uses: actions/checkout@v4
       - name: Trigger Render deploy
-        if: ${{ secrets.RENDER_DEPLOY_HOOK != '' }}
+        if: env.RENDER_DEPLOY_HOOK != ''
         run: curl -fsSL "$RENDER_DEPLOY_HOOK"
-        env:
-          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
 
   tag_release:
     needs: [deploy]
@@ -107,9 +107,11 @@ jobs:
     needs: [lint_and_test, deploy, tag_release]
     runs-on: ubuntu-latest
     if: always() && github.event_name == 'push'
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
     steps:
       - name: Report success
-        if: ${{ !contains(needs.*.result, 'failure') && secrets.DISCORD_WEBHOOK != '' }}
+        if: ${{ !contains(needs.*.result, 'failure') && env.DISCORD_WEBHOOK != '' }}
         uses: rjstone/discord-webhook-notify@v1
         with:
           severity: info
@@ -117,7 +119,7 @@ jobs:
           description: to https://blogilista-vgy5.onrender.com by ${{ github.actor }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Report failure
-        if: ${{ contains(needs.*.result, 'failure') && secrets.DISCORD_WEBHOOK != '' }}
+        if: ${{ contains(needs.*.result, 'failure') && env.DISCORD_WEBHOOK != '' }}
         uses: rjstone/discord-webhook-notify@v1
         with:
           severity: error
