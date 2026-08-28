@@ -1,0 +1,125 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize]
+
+jobs:
+  lint_and_test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+    env:
+      MONGODB_URI: mongodb://localhost:27017/bloglist
+      TEST_MONGODB_URI: mongodb://localhost:27017/bloglist-test
+      SECRET: ci-secret
+      PORT: 3003
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: osa4/blogilista
+      - name: Lint backend
+        run: npm run lint
+        working-directory: osa4/blogilista
+      - name: Test backend
+        run: npm test
+        working-directory: osa4/blogilista
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: osa5/blogilista-frontend
+      - name: Lint frontend
+        run: npm run lint
+        working-directory: osa5/blogilista-frontend
+      - name: Test frontend
+        run: npm test
+        working-directory: osa5/blogilista-frontend
+      - name: Build frontend
+        run: npm run build
+        working-directory: osa5/blogilista-frontend
+
+      - name: Install e2e dependencies
+        run: npm ci
+        working-directory: osa5/blogilista-e2e
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+        working-directory: osa5/blogilista-e2e
+      - name: Start backend in test mode
+        run: npm run test:e2e-server &
+        working-directory: osa4/blogilista
+      - name: Start frontend
+        run: npm run dev &
+        working-directory: osa5/blogilista-frontend
+      - name: Run e2e tests
+        run: npm test
+        working-directory: osa5/blogilista-e2e
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: osa5/blogilista-e2e/playwright-report/
+          retention-days: 7
+
+  deploy:
+    needs: [lint_and_test]
+    runs-on: ubuntu-latest
+    # Only real pushes to main deploy, and never a commit whose message asks to skip.
+    if: >-
+      github.event_name == 'push' &&
+      !contains(join(github.event.commits.*.message, ' '), '#skip')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trigger Render deploy
+        run: curl -fsSL "$RENDER_DEPLOY_HOOK"
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+  tag_release:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.71.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+          WITH_V: true
+
+  notify:
+    needs: [lint_and_test, deploy, tag_release]
+    runs-on: ubuntu-latest
+    if: always() && github.event_name == 'push'
+    steps:
+      - name: Report success
+        if: ${{ !contains(needs.*.result, 'failure') }}
+        uses: rjstone/discord-webhook-notify@v1
+        with:
+          severity: info
+          text: A new version of bloglist deployed
+          description: to https://bloglist.onrender.com by ${{ github.actor }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Report failure
+        if: ${{ contains(needs.*.result, 'failure') }}
+        uses: rjstone/discord-webhook-notify@v1
+        with:
+          severity: error
+          text: Build failed
+          description: commit ${{ github.event.head_commit.url }} by ${{ github.actor }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
