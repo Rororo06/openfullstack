@@ -12,7 +12,7 @@ jobs:
       - name: Check that the app answers
         uses: jtalk/url-health-check-action@v4
         with:
-          url: https://bloglist.onrender.com/health
+          url: https://blogilista-vgy5.onrender.com/health
           max-attempts: 3
           retry-delay: 10s
       - name: Report downtime
@@ -21,5 +21,5 @@ jobs:
         with:
           severity: error
           text: Health check failed
-          description: https://bloglist.onrender.com/health did not answer
+          description: https://blogilista-vgy5.onrender.com/health did not answer
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}

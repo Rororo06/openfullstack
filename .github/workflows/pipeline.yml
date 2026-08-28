@@ -84,6 +84,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Trigger Render deploy
+        if: ${{ secrets.RENDER_DEPLOY_HOOK != '' }}
         run: curl -fsSL "$RENDER_DEPLOY_HOOK"
         env:
           RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
@@ -108,15 +109,15 @@ jobs:
     if: always() && github.event_name == 'push'
     steps:
       - name: Report success
-        if: ${{ !contains(needs.*.result, 'failure') }}
+        if: ${{ !contains(needs.*.result, 'failure') && secrets.DISCORD_WEBHOOK != '' }}
         uses: rjstone/discord-webhook-notify@v1
         with:
           severity: info
           text: A new version of bloglist deployed
-          description: to https://bloglist.onrender.com by ${{ github.actor }}
+          description: to https://blogilista-vgy5.onrender.com by ${{ github.actor }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Report failure
-        if: ${{ contains(needs.*.result, 'failure') }}
+        if: ${{ contains(needs.*.result, 'failure') && secrets.DISCORD_WEBHOOK != '' }}
         uses: rjstone/discord-webhook-notify@v1
         with:
           severity: error
