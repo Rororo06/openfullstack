@@ -1,0 +1,17 @@
+import axios from 'axios'
+
+const baseUrl = 'https://api.openweathermap.org/data/2.5/weather'
+const apiKey = import.meta.env.VITE_WEATHER_API_KEY
+
+const getByCity = (city, countryCode) =>
+  axios
+    .get(baseUrl, {
+      params: {
+        q: `${city},${countryCode}`,
+        units: 'metric',
+        appid: apiKey,
+      },
+    })
+    .then(response => response.data)
+
+export default { getByCity }
