@@ -2,6 +2,13 @@
 
 Exercise submissions for the University of Helsinki [Full Stack Open](https://fullstackopen.com/) course.
 
+## Deployed apps
+
+| App | URL |
+| --- | --- |
+| Phonebook (parts 2 and 3) | https://puhelinluettelo-backend-nltk.onrender.com |
+| Bloglist (parts 4, 5, 7 and 11) | https://blogilista-vgy5.onrender.com |
+
 ## Structure
 
 | Directory | Content |
@@ -46,13 +53,13 @@ npm run dev
 
 ### Phonebook
 
-The phonebook talks to a `json-server` backend. Start the backend in one terminal
-and the frontend in another (the dev server proxies `/api` to port 3001):
+The phonebook talks to the part 3 backend through the relative path `/api/persons`.
+Start the backend in one terminal and the frontend in another (the dev server
+proxies `/api` to port 3001):
 
 ```bash
-cd osa2/puhelinluettelo
-npm run server
-npm run dev
+cd osa3/puhelinluettelo-backend && npm run dev
+cd osa2/puhelinluettelo && npm run dev
 ```
 
 ### Phonebook backend (part 3)
@@ -67,8 +74,8 @@ npm run dev          # API on http://localhost:3001
 npm run build:ui     # build the part 2 frontend into ./dist, served by the backend
 ```
 
-Once running, the part 2 phonebook frontend works against it unchanged (the Vite
-dev server proxies `/api` to port 3001).
+The deployed version is at https://puhelinluettelo-backend-nltk.onrender.com — it
+serves the built part 2 frontend from `/` and the API under `/api/persons`.
 
 ### Bloglist backend (part 4)
 

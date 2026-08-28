@@ -1,9 +1,8 @@
 # Part 11 — CI/CD
 
-The written exercises (11.1–11.4) are answered here; the pipeline itself is in
-[`workflows/`](./workflows) and runs against the bloglist app from parts 4, 5
-and 7 (exercises 11.20–11.21). Copy the two files to `.github/workflows/` in the
-repository root to activate them.
+The written exercises (11.1–11.4) are answered here; the pipeline itself lives in
+[`.github/workflows/`](../.github/workflows) and runs against the bloglist app
+from parts 4, 5 and 7 (exercises 11.20–11.21).
 
 ## 11.1 Warming up
 
