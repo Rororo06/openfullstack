@@ -22,7 +22,7 @@ Exercise submissions for the University of Helsinki [Full Stack Open](https://fu
 | [osa2/maiden_tiedot](./osa2/maiden_tiedot) | Part 2 – Countries (2.18–2.20) |
 | [osa3/puhelinluettelo-backend](./osa3/puhelinluettelo-backend) | Part 3 – Phonebook backend (3.1–3.22) |
 | [osa4/blogilista](./osa4/blogilista) | Part 4 – Bloglist backend with tests and JWT auth (4.1–4.23) |
-| [osa5/blogilista-frontend](./osa5/blogilista-frontend) | Part 5 – Bloglist frontend + component tests (5.1–5.16) |
+| [osa5/blogilista-frontend](./osa5/blogilista-frontend) | Part 5 – Bloglist frontend, component tests, routed and styled views (5.1–5.16, 5.24–5.31) |
 | [osa5/blogilista-e2e](./osa5/blogilista-e2e) | Part 5 – Playwright end-to-end tests (5.17–5.23) |
 | [osa6/unicafe-redux](./osa6/unicafe-redux) | Part 6 – unicafe with a Redux reducer (6.1–6.2) |
 | [osa6/redux-anecdotes](./osa6/redux-anecdotes) | Part 6 – Anecdotes with Redux Toolkit (6.3–6.19) |
@@ -95,7 +95,10 @@ npm test
 
 ### Bloglist frontend and e2e tests (part 5)
 
-The frontend proxies `/api` to the part 4 backend on port 3003:
+The frontend proxies `/api` to the part 4 backend on port 3003. React Router
+splits it into the blog list (`/`), a single blog (`/blogs/:id`), the login form
+(`/login`) and the new blog form (`/create`); liking needs a logged in user and
+only the creator sees the remove button.
 
 ```bash
 cd osa5/blogilista-frontend
