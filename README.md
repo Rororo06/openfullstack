@@ -42,6 +42,7 @@ Exercise submissions for the University of Helsinki [Full Stack Open](https://fu
 | [osa11](./osa11) | Part 11 – CI/CD pipeline for the bloglist app (11.1–11.21) |
 | [osa12/todo-app](./osa12/todo-app) | Part 12 – Containerised todo app with nginx, MongoDB and Redis (12.1–12.22) |
 | [osa13/blogilista-psql](./osa13/blogilista-psql) | Part 13 – Blog list on PostgreSQL with Sequelize (13.1–13.24) |
+| [my-app](./my-app) | Development and production container environments for the bloglist |
 
 Node 22 is expected (the Vite 8 based apps need `^20.19 || >=22.12`); parts 12
 and 13 also need Docker.

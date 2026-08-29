@@ -5,6 +5,7 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [react()],
   server: {
+    allowedHosts: ['app', 'localhost'],
     proxy: {
       '/api': {
         target: 'http://localhost:3003',

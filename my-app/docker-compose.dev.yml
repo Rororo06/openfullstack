@@ -1,0 +1,47 @@
+services:
+  app:
+    image: blogilista-front-dev
+    build:
+      context: ../osa5/blogilista-frontend
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ../osa5/blogilista-frontend:/usr/src/app
+      - /usr/src/app/node_modules
+
+  server:
+    image: blogilista-back-dev
+    build:
+      context: ../osa4/blogilista
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ../osa4/blogilista:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - MONGODB_URI=mongodb://the_username:the_password@mongo:27017/bloglist
+      - SECRET=devsecret
+      - PORT=3003
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: bloglist
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - mongo_data:/data/db
+
+  nginx:
+    image: nginx:1.29-alpine
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+    depends_on:
+      - app
+      - server
+
+volumes:
+  mongo_data:
