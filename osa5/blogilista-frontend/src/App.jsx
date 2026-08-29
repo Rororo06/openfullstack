@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
-import Blog from './components/Blog.jsx'
+import { useEffect, useState } from 'react'
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import BlogForm from './components/BlogForm.jsx'
+import BlogList from './components/BlogList.jsx'
+import BlogView from './components/BlogView.jsx'
 import LoginForm from './components/LoginForm.jsx'
+import Navigation from './components/Navigation.jsx'
 import Notification from './components/Notification.jsx'
-import Togglable from './components/Togglable.jsx'
 import blogService from './services/blogs.js'
 import loginService from './services/login.js'
 
@@ -18,7 +20,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [notification, setNotification] = useState(null)
 
-  const blogFormRef = useRef()
+  const navigate = useNavigate()
 
   useEffect(() => {
     blogService.getAll().then(setBlogs)
@@ -42,6 +44,7 @@ const App = () => {
       setUser(loggedUser)
       setUsername('')
       setPassword('')
+      navigate('/')
     } catch {
       notify('wrong username or password', 'error')
     }
@@ -50,14 +53,15 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem(STORAGE_KEY)
     setUser(null)
+    navigate('/')
   }
 
   const createBlog = async newBlog => {
     try {
       const created = await blogService.create(newBlog)
-      blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(created))
       notify(`a new blog ${created.title} by ${created.author} added`)
+      navigate('/')
     } catch {
       notify('creating a blog failed', 'error')
     }
@@ -82,50 +86,52 @@ const App = () => {
       await blogService.remove(blog.id)
       setBlogs(blogs.filter(b => b.id !== blog.id))
       notify(`removed ${blog.title}`)
+      navigate('/')
     } catch {
       notify('removing the blog failed', 'error')
     }
   }
 
-  if (!user) {
-    return (
-      <div>
-        <Notification notification={notification} />
-        <LoginForm
-          onSubmit={handleLogin}
-          username={username}
-          onUsernameChange={event => setUsername(event.target.value)}
-          password={password}
-          onPasswordChange={event => setPassword(event.target.value)}
-        />
-      </div>
-    )
-  }
-
   return (
-    <div>
-      <h2>blogs</h2>
+    <div className="container">
+      <Navigation user={user} onLogout={handleLogout} />
       <Notification notification={notification} />
-      <p>
-        {user.name ?? user.username} logged in{' '}
-        <button onClick={handleLogout}>logout</button>
-      </p>
-      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <BlogForm createBlog={createBlog} />
-      </Togglable>
-      {[...blogs]
-        .sort((a, b) => b.likes - a.likes)
-        .map(blog => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            onLike={likeBlog}
-            onRemove={removeBlog}
-            canRemove={
-              !blog.user || blog.user.username === user.username
-            }
-          />
-        ))}
+      <Routes>
+        <Route path="/" element={<BlogList blogs={blogs} />} />
+        <Route
+          path="/blogs/:id"
+          element={
+            <BlogView
+              blogs={blogs}
+              user={user}
+              onLike={likeBlog}
+              onRemove={removeBlog}
+            />
+          }
+        />
+        <Route
+          path="/create"
+          element={
+            user ? <BlogForm createBlog={createBlog} /> : <Navigate replace to="/login" />
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            user ? (
+              <Navigate replace to="/" />
+            ) : (
+              <LoginForm
+                onSubmit={handleLogin}
+                username={username}
+                onUsernameChange={event => setUsername(event.target.value)}
+                password={password}
+                onPasswordChange={event => setPassword(event.target.value)}
+              />
+            )
+          }
+        />
+      </Routes>
     </div>
   )
 }
