@@ -1,4 +1,4 @@
-# Part 12 — Containers
+# Part 12 - Containers
 
 `todo-app/` is the todo application from the part 12 material: an Express
 backend with MongoDB and Redis, a React frontend and nginx in front of both.

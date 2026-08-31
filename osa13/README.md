@@ -1,7 +1,7 @@
-# Part 13 — Relational databases
+# Part 13 - Relational databases
 
 `blogilista-psql/` is the blog list backend rewritten on PostgreSQL with
-Sequelize. The schema is managed with umzug migrations only — nothing calls
+Sequelize. The schema is managed with umzug migrations only - nothing calls
 `sync()`, so the migration files are the single source of truth.
 
 ## Running it

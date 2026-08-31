@@ -1,8 +1,8 @@
-# Part 11 — CI/CD
+# Part 11 - CI/CD
 
-The written exercises (11.1–11.4) are answered here; the pipeline itself lives in
+The written exercises (11.1-11.4) are answered here; the pipeline itself lives in
 [`.github/workflows/`](../.github/workflows) and runs against the bloglist app
-from parts 4, 5 and 7 (exercises 11.20–11.21).
+from parts 4, 5 and 7 (exercises 11.20-11.21).
 
 ## 11.1 Warming up
 
@@ -10,7 +10,7 @@ from parts 4, 5 and 7 (exercises 11.20–11.21).
 
 For a Python project the CI job would at least run a linter (`ruff` or
 `flake8`), a formatter check (`black --check`), a type checker (`mypy`) and the
-test suite (`pytest`). Nothing here is Python specific — every language needs
+test suite (`pytest`). Nothing here is Python specific - every language needs
 lint, format, type and test steps; only the tools change (`eslint`/`prettier`/
 `tsc`/`jest` in JavaScript, `checkstyle`/`spotless`/`javac`/`junit` in Java).
 
@@ -37,7 +37,7 @@ The `pipeline.yml` job `lint_and_test` installs dependencies with `npm ci`, then
 Playwright end-to-end suite against a backend started with `NODE_ENV=test`.
 MongoDB is provided as a service container so the backend tests have a database.
 
-## Deployment and versioning (11.10–11.16)
+## Deployment and versioning (11.10-11.16)
 
 `deploy` runs only for pushes to `main`, only after the tests pass, and it is
 skipped when any commit message in the push contains `#skip`:
@@ -52,7 +52,7 @@ Deployment itself is a call to a Render deploy hook stored in the
 `RENDER_DEPLOY_HOOK` secret. After a successful deploy `tag_release` bumps the
 patch version and pushes a new `vX.Y.Z` tag.
 
-## Notifications and health check (11.17–11.19)
+## Notifications and health check (11.17-11.19)
 
 `notify` posts to Discord through `DISCORD_WEBHOOK` on both success and failure,
 and `health_check.yml` pings `/health` daily (and on demand) so a deployment
